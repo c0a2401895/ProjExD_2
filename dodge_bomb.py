@@ -31,7 +31,6 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
-
 def gameover(screen: pg.Surface) -> None:
     """
     ゲームオーバー画面を表示する関数
@@ -75,9 +74,7 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
-
     # 爆弾初期化
-
     bb_img = pg.Surface((20, 20))
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
     bb_rct = bb_img.get_rect()
@@ -85,7 +82,6 @@ def main():
     bb_img.set_colorkey((0, 0, 0))
     vx,vy = +5, +5 # 爆弾の移動量
     
-
     clock = pg.time.Clock()
     tmr = 0
 
@@ -107,7 +103,6 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += mv[0] # 左右方向
                 sum_mv[1] += mv[1] # 上下方向
-    
 
         # if key_lst[pg.K_UP]:
         #     sum_mv[1] -= 5
@@ -121,8 +116,6 @@ def main():
         if check_bound(kk_rct) != (True, True): # 画面外だったら
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) # こうかとんを元の位置に戻す
         screen.blit(kk_img, kk_rct)
-
-
 
         yoko, tate = check_bound(bb_rct) # 爆弾の画面内判定
         if not yoko:
