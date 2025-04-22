@@ -2,6 +2,7 @@ import os
 import random as randam
 import sys
 import pygame as pg
+import time
 
 
 
@@ -28,6 +29,42 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     if rct.top < 0 or HEIGHT < rct.bottom: # 画面内だったら
         tate = False
     return yoko, tate
+
+
+
+def gameover(screen: pg.Surface) -> None:
+    """
+    ゲームオーバー画面を表示する関数
+    引数 : screen : Surface
+    戻り値 : なし
+    """
+    blackout = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(blackout, (0, 0, 0), (0, 0, WIDTH, HEIGHT)) # 画面を黒く塗りつぶす
+    blackout.set_alpha(128)  # 半透明に設定
+    screen.blit(blackout, (0, 0))
+
+    font = pg.font.Font(None, 80)
+    txt = font.render("GAME OVER", True, (255, 255, 255))
+    screen.blit(txt, [350, 300])
+    gameoverkouka_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    gameoverkouka_rct = gameoverkouka_img.get_rect()
+    gameoverkouka_rct.center = 300, 320
+    gameoverkouka1_rct = gameoverkouka_img.get_rect()
+    gameoverkouka1_rct.center = 740, 320
+    screen.blit(gameoverkouka_img, gameoverkouka_rct) # こうかとん描画
+    screen.blit(gameoverkouka_img, gameoverkouka1_rct)
+    pg.display.update()
+    time.sleep(5) # 5秒待つ
+    
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_accs = [a for a in range(1, 11)]
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+    return bb_imgs, bb_accs
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -96,7 +133,7 @@ def main():
         bb_imgs, bb_accs = init_bb_imgs()
         avx = vx*bb_accs[min(tmr // 500, 9)]
         bb_img = bb_imgs[min(tmr//500, 9)]
-        
+
         bb_rct.move_ip(avx,vy)   # 爆弾移動
 
         screen.blit(bb_img, bb_rct) # 爆弾描画
@@ -104,41 +141,6 @@ def main():
         pg.display.update()
         tmr += 1
         clock.tick(50)
-
-
-def gameover(screen: pg.Surface) -> None:
-    """
-    ゲームオーバー画面を表示する関数
-    引数 : screen : Surface
-    戻り値 : なし
-    """
-    blackout = pg.Surface((WIDTH, HEIGHT))
-    pg.draw.rect(blackout, (0, 0, 0), (0, 0, WIDTH, HEIGHT)) # 画面を黒く塗りつぶす
-    blackout.set_alpha(128)  # 半透明に設定
-    screen.blit(blackout, (0, 0))
-
-    font = pg.font.Font(None, 80)
-    txt = font.render("GAME OVER", True, (255, 255, 255))
-    screen.blit(txt, [350, 300])
-    gameoverkouka_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
-    gameoverkouka_rct = gameoverkouka_img.get_rect()
-    gameoverkouka_rct.center = 300, 320
-    gameoverkouka1_rct = gameoverkouka_img.get_rect()
-    gameoverkouka1_rct.center = 740, 320
-    screen.blit(gameoverkouka_img, gameoverkouka_rct) # こうかとん描画
-    screen.blit(gameoverkouka_img, gameoverkouka1_rct)
-    pg.display.update()
-    pg.time.wait(5000) # 5秒待つ
-    
-def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
-    bb_accs = [a for a in range(1, 11)]
-    bb_imgs = []
-    for r in range(1, 11):
-        bb_img = pg.Surface((20*r, 20*r))
-        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
-        bb_img.set_colorkey((0, 0, 0))
-        bb_imgs.append(bb_img)
-    return bb_imgs, bb_accs
 if __name__ == "__main__":
     pg.init()
     main()
